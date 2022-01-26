@@ -1,3 +1,9 @@
+// AUDIO
+let musicBG = new Audio()
+musicBG.src = 'sounds/music01.mp3'
+musicBG.volume = 0.2
+musicBG.play()
+
 noise.seed(Math.random())
 const scene = new THREE.Scene()
 const renderer = new THREE.WebGLRenderer()
