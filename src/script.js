@@ -4,6 +4,7 @@ const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+camera.lookAt (new THREE.Vector3(1,0,1));
 const controls = new THREE.PointerLockControls(camera, document.body)
 document.body.addEventListener("click", () =>{
     controls.lock()
@@ -26,7 +27,7 @@ class Block {
 
     display = () => {
         const blockBox = new THREE.BoxBufferGeometry(5, 5, 5)
-        const blockMesh = new THREE.MeshBasicMaterial({color: 0x00ff00})
+        const blockMesh = new THREE.MeshBasicMaterial({color: 0x000000})
         const block = new THREE.Mesh(blockBox, blockMesh)
         scene.add(block)
         block.position.x = this.x
@@ -34,7 +35,7 @@ class Block {
         block.position.z = this.z
 
         const edges = new THREE.EdgesGeometry(blockBox)
-        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color: 0xff0000}))
+        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color: 0xff00ff, linewidth:5}))
         scene.add(line)
         line.position.x = this.x
         line.position.y = this.y-10
@@ -47,21 +48,71 @@ const amplitude = 50
 const inc = 0.05
 let xoff = 0
 let zoff = 0
-for(let x=0;x<20;x++){
+for(let x=0;x<50;x++){
     xoff = 0
-    for(let z=0;z<20;z++){
+    for(let z=0;z<50;z++){
         let v = Math.round(noise.perlin2(xoff, zoff) * amplitude / 5) * 5
         blocks.push(new Block(x*5, v, z * 5))
         xoff = xoff + inc
     }
     zoff = zoff + inc
 }
-for(let i = 0;i<blocks.length;i++){
-    blocks[i].display()
+blocks.forEach((b) =>{
+    b.display()
+})
+
+// Comprobamos que tecla se ha pulsado
+var keys = []
+var canJump = true
+document.addEventListener("keydown", (e) => {
+    keys.push(e.key)
+    if(e.key == " " && canJump == true){
+        canJump = false
+        ySpeed = -2
+    }
+})
+document.addEventListener("keyup",(e) => {
+    var newArr = []
+    keys.forEach((k)=>{
+        if(k !== e.key){
+            newArr.push(k)
+        }
+    })
+    keys = newArr
+})
+
+const movingSpeed = 0.75
+let ySpeed = 0
+const acc = 0.1
+const update = () => {
+    if(keys.includes("w")){
+        controls.moveForward(movingSpeed)
+    }
+    if(keys.includes("a")){
+        controls.moveRight(-1 * movingSpeed)
+    }
+    if(keys.includes("s")){
+        controls.moveForward(-1 *movingSpeed)
+    }
+    if(keys.includes("d")){
+        controls.moveRight(movingSpeed)
+    }
+    camera.position.y = camera.position.y - ySpeed;
+    ySpeed = ySpeed + acc
+    blocks.forEach((b)=> {
+        if(camera.position.x <= b.x + 5 &&
+            camera.position.x >= b.x &&
+            camera.position.z <= b.z +5 &&
+            camera.position.z >= b.z){
+                if(camera.position.y < b.y){
+                    camera.position.y = b.y
+                    canJump = true
+                    ySpeed = 0
+                    return
+                }
+            }
+    })
 }
-
-
-const update = () => {}
 
 const render = () => {
     renderer.render(scene, camera)
