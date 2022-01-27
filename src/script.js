@@ -2,7 +2,6 @@
 let musicBG = new Audio()
 musicBG.src = 'sounds/music01.mp3'
 musicBG.volume = 0.2
-musicBG.play()
 
 noise.seed(Math.random())
 const scene = new THREE.Scene()
@@ -23,6 +22,19 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()    
 })
+
+let autoJump = false
+const toggleAutoJump = () =>{
+    autoJump = !autoJump
+    document.getElementById("autojumpBtn").innerHTML = autoJump ? "AUTOJUMP ON" : "AUTOJUMP OFF"
+}
+
+let musicPlay = false
+const toggleMusic = () => {
+    musicPlay = !musicPlay
+    musicPlay ? musicBG.play() : musicBG.pause()
+    document.getElementById("musicBtn").innerHTML = musicPlay ? "MUSIC ON" : "MUSIC OFF"
+}
 
 class Block {
     constructor(x,y,z){
@@ -48,6 +60,9 @@ class Block {
         line.position.z = this.z
     }
 }
+
+//const axesHelper = new THREE.AxesHelper(5)
+//scene.add(axesHelper )
 
 let blocks = []
 const amplitude = 50
@@ -93,25 +108,73 @@ const acc = 0.1
 const update = () => {
     if(keys.includes("w")){
         controls.moveForward(movingSpeed)
+        if(!autoJump){
+            blocks.forEach((b)=> {
+                if(camera.position.x <= b.x  + 2.5 &&
+                    camera.position.x >= b.x - 2.5 &&
+                    camera.position.z <= b.z + 2.5 &&
+                    camera.position.z >= b.z - 2.5){
+                        if(camera.position.y == b.y - 2.5){
+                            controls.moveForward(-1 * movingSpeed)
+                        }
+                    }
+            })
+        }
     }
     if(keys.includes("a")){
         controls.moveRight(-1 * movingSpeed)
+        if(!autoJump){
+            blocks.forEach((b)=> {
+                if(camera.position.x <= b.x  + 2.5 &&
+                    camera.position.x >= b.x - 2.5 &&
+                    camera.position.z <= b.z + 2.5 &&
+                    camera.position.z >= b.z - 2.5){
+                        if(camera.position.y == b.y - 2.5){
+                            controls.moveRight(movingSpeed)
+                        }
+                    }
+            })
+        }
     }
     if(keys.includes("s")){
         controls.moveForward(-1 *movingSpeed)
+        if(!autoJump){
+            blocks.forEach((b)=> {
+                if(camera.position.x <= b.x  + 2.5 &&
+                    camera.position.x >= b.x - 2.5 &&
+                    camera.position.z <= b.z + 2.5 &&
+                    camera.position.z >= b.z - 2.5){
+                        if(camera.position.y == b.y - 2.5){
+                            controls.moveForward(movingSpeed)
+                        }
+                    }
+            })
+        }
     }
     if(keys.includes("d")){
         controls.moveRight(movingSpeed)
+        if(!autoJump){
+            blocks.forEach((b)=> {
+                if(camera.position.x <= b.x  + 2.5 &&
+                    camera.position.x >= b.x - 2.5 &&
+                    camera.position.z <= b.z + 2.5 &&
+                    camera.position.z >= b.z - 2.5){
+                        if(camera.position.y == b.y - 2.5){
+                            controls.moveRight(-1 * movingSpeed)
+                        }
+                    }
+            })
+        }
     }
     camera.position.y = camera.position.y - ySpeed;
     ySpeed = ySpeed + acc
     blocks.forEach((b)=> {
-        if(camera.position.x <= b.x + 5 &&
-            camera.position.x >= b.x &&
-            camera.position.z <= b.z +5 &&
-            camera.position.z >= b.z){
-                if(camera.position.y < b.y){
-                    camera.position.y = b.y
+        if(camera.position.x <= b.x  + 2.5 &&
+            camera.position.x >= b.x - 2.5 &&
+            camera.position.z <= b.z + 2.5 &&
+            camera.position.z >= b.z - 2.5){
+                if(camera.position.y <= b.y + 2.5 && camera.position.y >= b.y - 2.5){
+                    camera.position.y = b.y + 2.5
                     canJump = true
                     ySpeed = 0
                     return
