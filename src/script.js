@@ -5,6 +5,7 @@ musicBG.volume = 0.2
 
 noise.seed(Math.random())
 const scene = new THREE.Scene()
+scene.background = new THREE.Color(0x00ffff)
 const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
@@ -75,6 +76,7 @@ class Block {
 //const axesHelper = new THREE.AxesHelper(5)
 //scene.add(axesHelper )
 
+/*
 let blocks = []
 const amplitude = 50
 const inc = 0.05
@@ -89,9 +91,41 @@ for(let x=0;x<20;x++){
     }
     zoff = zoff + inc
 }
-blocks.forEach((b) =>{
-    b.display()
+*/
+
+let chunks = []
+let xoff = 0
+let zoff = 0
+const inc = 0.05
+const amplitude = 30 + (Math.random() * 70)
+const renderDistance = 3
+const chunkSize = 10
+camera.position.x = renderDistance * chunkSize / 2 * 5
+camera.position.z = renderDistance * chunkSize / 2 * 5
+camera.position.y = 50
+for(let i=0;i<renderDistance;i++){
+    let chunk = []
+    for(let j=0;j<renderDistance;j++){
+        for(let x = i * chunkSize; x < (i * chunkSize) + chunkSize; x++){
+            for(let z = j * chunkSize; z < (j * chunkSize) + chunkSize; z++){
+                xoff = inc * x
+                zoff = inc * z
+                const v = Math.round(noise.perlin2(xoff, zoff) * amplitude / 5) * 5
+                chunk.push(new Block(x*5,v, z* 5))
+            }
+        }
+    }
+    chunks.push(chunk)
+}
+
+
+chunks.forEach((c) =>{
+    c.forEach((b) => {
+        b.display()    
+    })
+    
 })
+
 
 // Comprobamos que tecla se ha pulsado
 var keys = []
@@ -119,79 +153,82 @@ const acc = 0.1
 const update = () => {
     if(keys.includes("w")){
         controls.moveForward(movingSpeed)
-        if(!autoJump){
-            blocks.forEach((b)=> {
-                if(camera.position.x <= b.x  + 2.5 &&
-                    camera.position.x >= b.x - 2.5 &&
-                    camera.position.z <= b.z + 2.5 &&
-                    camera.position.z >= b.z - 2.5){
-                        if(camera.position.y == b.y - 2.5){
-                            controls.moveForward(-1 * movingSpeed)
-                        }
-                    }
-            })
-        }
+        // if(!autoJump){
+        //     blocks.forEach((b)=> {
+        //         if(camera.position.x <= b.x  + 2.5 &&
+        //             camera.position.x >= b.x - 2.5 &&
+        //             camera.position.z <= b.z + 2.5 &&
+        //             camera.position.z >= b.z - 2.5){
+        //                 if(camera.position.y == b.y - 2.5){
+        //                     controls.moveForward(-1 * movingSpeed)
+        //                 }
+        //             }
+        //     })
+        // }
     }
     if(keys.includes("a")){
         controls.moveRight(-1 * movingSpeed)
-        if(!autoJump){
-            blocks.forEach((b)=> {
-                if(camera.position.x <= b.x  + 2.5 &&
-                    camera.position.x >= b.x - 2.5 &&
-                    camera.position.z <= b.z + 2.5 &&
-                    camera.position.z >= b.z - 2.5){
-                        if(camera.position.y == b.y - 2.5){
-                            controls.moveRight(movingSpeed)
-                        }
-                    }
-            })
-        }
+        // if(!autoJump){
+        //     blocks.forEach((b)=> {
+        //         if(camera.position.x <= b.x  + 2.5 &&
+        //             camera.position.x >= b.x - 2.5 &&
+        //             camera.position.z <= b.z + 2.5 &&
+        //             camera.position.z >= b.z - 2.5){
+        //                 if(camera.position.y == b.y - 2.5){
+        //                     controls.moveRight(movingSpeed)
+        //                 }
+        //             }
+        //     })
+        // }
     }
     if(keys.includes("s")){
         controls.moveForward(-1 *movingSpeed)
-        if(!autoJump){
-            blocks.forEach((b)=> {
-                if(camera.position.x <= b.x  + 2.5 &&
-                    camera.position.x >= b.x - 2.5 &&
-                    camera.position.z <= b.z + 2.5 &&
-                    camera.position.z >= b.z - 2.5){
-                        if(camera.position.y == b.y - 2.5){
-                            controls.moveForward(movingSpeed)
-                        }
-                    }
-            })
-        }
+        // if(!autoJump){
+        //     blocks.forEach((b)=> {
+        //         if(camera.position.x <= b.x  + 2.5 &&
+        //             camera.position.x >= b.x - 2.5 &&
+        //             camera.position.z <= b.z + 2.5 &&
+        //             camera.position.z >= b.z - 2.5){
+        //                 if(camera.position.y == b.y - 2.5){
+        //                     controls.moveForward(movingSpeed)
+        //                 }
+        //             }
+        //     })
+        // }
     }
     if(keys.includes("d")){
         controls.moveRight(movingSpeed)
-        if(!autoJump){
-            blocks.forEach((b)=> {
-                if(camera.position.x <= b.x  + 2.5 &&
-                    camera.position.x >= b.x - 2.5 &&
-                    camera.position.z <= b.z + 2.5 &&
-                    camera.position.z >= b.z - 2.5){
-                        if(camera.position.y == b.y - 2.5){
-                            controls.moveRight(-1 * movingSpeed)
-                        }
-                    }
-            })
-        }
+        // if(!autoJump){
+        //     blocks.forEach((b)=> {
+        //         if(camera.position.x <= b.x  + 2.5 &&
+        //             camera.position.x >= b.x - 2.5 &&
+        //             camera.position.z <= b.z + 2.5 &&
+        //             camera.position.z >= b.z - 2.5){
+        //                 if(camera.position.y == b.y - 2.5){
+        //                     controls.moveRight(-1 * movingSpeed)
+        //                 }
+        //             }
+        //     })
+        // }
     }
     camera.position.y = camera.position.y - ySpeed;
     ySpeed = ySpeed + acc
-    blocks.forEach((b)=> {
-        if(camera.position.x <= b.x  + 2.5 &&
-            camera.position.x >= b.x - 2.5 &&
-            camera.position.z <= b.z + 2.5 &&
-            camera.position.z >= b.z - 2.5){
-                if(camera.position.y <= b.y + 2.5 && camera.position.y >= b.y - 2.5){
-                    camera.position.y = b.y + 2.5
-                    canJump = true
-                    ySpeed = 0
-                    return
+    chunks.forEach((c)=> {
+        c .forEach((b)=> {
+            if(camera.position.x <= b.x  + 2.5 &&
+                camera.position.x >= b.x - 2.5 &&
+                camera.position.z <= b.z + 2.5 &&
+                camera.position.z >= b.z - 2.5){
+                    if(camera.position.y <= b.y + 2.5 && camera.position.y >= b.y - 2.5){
+                        camera.position.y = b.y + 2.5
+                        canJump = true
+                        ySpeed = 0
+                        return
+                    }
                 }
-            }
+        })
     })
+    
 }
 
 const render = () => {
