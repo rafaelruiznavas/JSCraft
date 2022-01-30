@@ -36,6 +36,17 @@ const toggleMusic = () => {
     document.getElementById("musicBtn").innerHTML = musicPlay ? "MUSIC ON" : "MUSIC OFF"
 }
 
+const loader = new THREE.TextureLoader()
+const materialArray = [
+    new THREE.MeshBasicMaterial({map: loader.load('images/side.png')}),
+    new THREE.MeshBasicMaterial({map: loader.load('images/side.png')}),
+    new THREE.MeshBasicMaterial({map: loader.load('images/top.png')}),
+    new THREE.MeshBasicMaterial({map: loader.load('images/bottom.png')}),
+    new THREE.MeshBasicMaterial({map: loader.load('images/side.png')}),    
+    new THREE.MeshBasicMaterial({map: loader.load('images/side.png')}),
+    
+]
+
 class Block {
     constructor(x,y,z){
         this.x = x
@@ -45,15 +56,15 @@ class Block {
 
     display = () => {
         const blockBox = new THREE.BoxBufferGeometry(5, 5, 5)
-        const blockMesh = new THREE.MeshBasicMaterial({color: 0x000000})
-        const block = new THREE.Mesh(blockBox, blockMesh)
+        //const blockMesh = new THREE.MeshBasicMaterial({color: 0x000000})
+        const block = new THREE.Mesh(blockBox, materialArray)
         scene.add(block)
         block.position.x = this.x
         block.position.y = this.y-10
         block.position.z = this.z
 
         const edges = new THREE.EdgesGeometry(blockBox)
-        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color: 0xff00ff, linewidth:5}))
+        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color: 0x000000, linewidth:1}))
         scene.add(line)
         line.position.x = this.x
         line.position.y = this.y-10
@@ -69,9 +80,9 @@ const amplitude = 50
 const inc = 0.05
 let xoff = 0
 let zoff = 0
-for(let x=0;x<50;x++){
+for(let x=0;x<20;x++){
     xoff = 0
-    for(let z=0;z<50;z++){
+    for(let z=0;z<20;z++){
         let v = Math.round(noise.perlin2(xoff, zoff) * amplitude / 5) * 5
         blocks.push(new Block(x*5, v, z * 5))
         xoff = xoff + inc
